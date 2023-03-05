@@ -40,7 +40,7 @@ app.get('/api/persons/:id', (req, res, next) => {
 				res.json(person)
 			}
 			else {
-				res.status(404).end()
+				res.status(404).send({ error: 'HTTP ERROR 404' })
 			}
 		})
 		.catch(error => next(error))
@@ -73,7 +73,7 @@ app.post('/api/persons', (req, res, next) => {
 		.catch(error => next(error))
 })
 
-
+// Päivittää olemassaolevan kontaktin
 app.put('/api/persons/:id', (req, res, next) => {
 	const body = req.body
 
@@ -94,13 +94,14 @@ app.put('/api/persons/:id', (req, res, next) => {
 		.catch(error => next(error))
 })
 
+// Käsittelee 404-virheet
 const unknownEndpoint = (req, res) => {
 	res.status(404).send({ error: 'Unknown endpoint' })
 }
 
 app.use(unknownEndpoint)
 
-
+// Virheidenkäsittelijä
 const errorHandler = (error, req, res, next) => {
 	console.log(error.name)
 	console.log(error.message)
@@ -115,6 +116,7 @@ const errorHandler = (error, req, res, next) => {
 
 app.use(errorHandler)
 
+// Sovelluksen käyttämä portti
 const PORT = process.env.PORT
 app.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`)

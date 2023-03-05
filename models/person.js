@@ -4,6 +4,7 @@ mongoose.set('strictQuery', false)
 
 const url = process.env.MONGODB_URL
 
+// Yhdistää sovelluksen tietokantaan
 console.log('Connecting to MongoDB:', url)
 mongoose.connect(url)
 	.then(() => {
@@ -13,6 +14,7 @@ mongoose.connect(url)
 		console.log('Error connecting to MongoDB:', error.message)
 	})
 
+// Luodaan person skeema ja määritetään validointi
 const personSchema = new mongoose.Schema({
 	name: {
 		type: String,
@@ -36,6 +38,7 @@ const personSchema = new mongoose.Schema({
 // eslint-disable-next-line no-unused-vars
 const Person = mongoose.model('Person', personSchema)
 
+// Muutokset Person-skeemaan
 personSchema.set('toJSON', {
 	transform: (document, returnedObject) => {
 		returnedObject.id = returnedObject._id.toString()
