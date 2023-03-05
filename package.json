@@ -8,7 +8,8 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd ../../osa2/puhelinluettelo && npm run build && cp -r build ../../osa3/puhelinluettelobackend",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
+    "lint": "eslint ."
   },
   "author": "JuusoK",
   "license": "ISC",
@@ -19,5 +20,8 @@
     "mongoose": "^6.9.2",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.20"
+  },
+  "devDependencies": {
+    "eslint": "^8.35.0"
   }
 }

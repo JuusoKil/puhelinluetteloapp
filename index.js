@@ -13,110 +13,109 @@ app.use(express.static('build'))
 
 // Hakee kaikki kontaktit tietokannasta
 app.get('/api/persons', (req, res) => {
-    Person.find({}).then(persons => {
-        res.json(persons)
-    })
+	Person.find({}).then(persons => {
+		res.json(persons)
+	})
 })
 
 // Hakee tiedot infosivulta
 app.get('/info', (req, res) => {
-    const date = new Date()
-    Person.countDocuments({}, function (err, count) {
-        if (err) {
-            console.log(err)
-            res.send('Error occured')
-        }
-        else {
-            res.send(`<p>Phonebook has info for ${count} people</p>` + date)
-        }
-        
-    }) 
+	const date = new Date()
+	Person.countDocuments({}, function (err, count) {
+		if (err) {
+			console.log(err)
+			res.send('Error occured')
+		}
+		else {
+			res.send(`<p>Phonebook has info for ${count} people</p>` + date)
+		}
+	})
 })
 
 // Hakee kontaktin id:llä
 app.get('/api/persons/:id', (req, res, next) => {
-   Person.findById(req.params.id)
-   .then(person => {
-        if (person) {
-            res.json(person)
-        }
-        else {
-            res.status(404).end()
-        }
-   })
-    .catch(error => next(error))
+	Person.findById(req.params.id)
+		.then(person => {
+			if (person) {
+				res.json(person)
+			}
+			else {
+				res.status(404).end()
+			}
+		})
+		.catch(error => next(error))
 })
 
 // Poistaa kontaktin
 app.delete('/api/persons/:id', (req, res, next) => {
-    Person.findByIdAndRemove(req.params.id)
-    .then(result => {
-        res.status(204).end()
-    })
-    .catch(error => next(error))
+	Person.findByIdAndRemove(req.params.id)
+		.then(() => {
+			res.status(204).end()
+		})
+		.catch(error => next(error))
 })
 
 // Lisää uuden kontaktin
 app.post('/api/persons', (req, res, next) => {
-    const body = req.body
+	const body = req.body
 
-    // Luodaan uusi kontakti annetuista tiedoista
-    const person = new Person ({
-        name: body.name,
-        number: body.number,
-    })
+	// Luodaan uusi kontakti annetuista tiedoista
+	const person = new Person ({
+		name: body.name,
+		number: body.number,
+	})
 
-    // Lisätään kontakti listaan ja palautetaan lisätty kontakti
-    person.save()
-        .then(savedPerson => {
-        res.json(savedPerson)
-    })
-        .catch(error => next(error))
+	// Lisätään kontakti listaan ja palautetaan lisätty kontakti
+	person.save()
+		.then(savedPerson => {
+			res.json(savedPerson)
+		})
+		.catch(error => next(error))
 })
 
 
 app.put('/api/persons/:id', (req, res, next) => {
-    const body = req.body
+	const body = req.body
 
-    const person = {
-        name: body.name,
-        number: body.number
-    }
+	const person = {
+		name: body.name,
+		number: body.number
+	}
 
-    Person.findByIdAndUpdate(
-        req.params.id, 
-        person, 
-        { new: true, runValidators: true, context: 'query' }
-    )
+	Person.findByIdAndUpdate(
+		req.params.id,
+		person,
+		{ new: true, runValidators: true, context: 'query' }
+	)
 
-        .then(updatedPerson => {
-            res.json(updatedPerson)
-        })
-        .catch(error => next(error))
+		.then(updatedPerson => {
+			res.json(updatedPerson)
+		})
+		.catch(error => next(error))
 })
 
 const unknownEndpoint = (req, res) => {
-    res.status(404).send({ error: 'Unknown endpoint' })
+	res.status(404).send({ error: 'Unknown endpoint' })
 }
 
 app.use(unknownEndpoint)
 
 
 const errorHandler = (error, req, res, next) => {
-    console.log(error.name)
-    console.log(error.message)
-    if (error.name === 'CastError') {
-        return res.status(400).send( {error: 'malformatted id'} )
-    }
-    else if (error.name === "ValidationError") {
-        return res.status(400).json({ error: error.message })
-    }
-    next(error)
+	console.log(error.name)
+	console.log(error.message)
+	if (error.name === 'CastError') {
+		return res.status(400).send( { error: 'malformatted id' } )
+	}
+	else if (error.name === 'ValidationError') {
+		return res.status(400).json({ error: error.message })
+	}
+	next(error)
 }
 
 app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`)
+	console.log(`Server is running on port ${PORT}`)
 })
